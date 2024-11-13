@@ -29,9 +29,9 @@ ifeq ($(build_type), release)
     endif
 
     ifeq ($(libtype), muclibc)
-        TARGET = landmark_uclibc
+        TARGET = sleep_detection_uclibc
     else
-        TARGET = landmark_glibc
+        TARGET = sleep_detection_glibc
     endif
 
 else ifeq ($(build_type), profile)
@@ -80,7 +80,7 @@ endif
 LIBS += ${IMP_DIR}/lib/uclibc/libalog.a ${IMP_DIR}/lib/uclibc/libimp.a
 
 OBJS := inference_nv12.o sample-Magik.o ${IMP_DIR}/samples/libimp-samples/sample-common.o
-#OBJS := inference.o
+# OBJS := inference.o
 
 
 %.o:%.cpp
@@ -98,10 +98,9 @@ release:
 	cp $(TOPDIR)/lib/uclibc/libvenus.so execuate_file/
 	cp $(TARGET) execuate_file/
 	#cp venus_yolov5s_bin_uclibc_release execuate_file/
-	cp landmark_uclibc execuate_file/
+	cp sleep_detection_uclibc execuate_file/
 
 .PHONY: clean
 clean: 
 	rm -f $(TARGET) $(OBJS)
 	rm execuate_file -r
-

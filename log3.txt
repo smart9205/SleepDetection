@@ -1,0 +1,322 @@
+[root@Zeratul:sleep_old_venus]# ./landmark_img 6.jpg
+drivers version:0.0.1.0.RELEASE(b4edd3b)240304-22.30.37(7.2.0-r5.1.5-libc2.29-1-lib@STANDARD-sys@STANDARD-aie@NNA1)
+The soc-nna version is 20220525
+[I/magik::venus]: venus.cc:71 ***********************
+[I/magik::venus]: venus.cc:72 venus memory map size: 0
+[I/magik::venus]: venus.cc:73 ***********************
+[I/magik::venus]: venus.cc:106 ***********************
+[I/magik::venus]: venus.cc:107 venus init sucess.
+[I/magik::venus]: venus.cc:108 ***********************
+INFO(magik): venus version:1.2.1.0.ALPHA(04010210_00000000_8df640f) built:240308-00.14.06(7.2.0-r5.1.5-libc2.29-mips-lib@STANDARD-sys@STANDARD-aie@NNA1)
+INFO(magik): model version:1.2.1.NNA1_ef8f4d3 
+INFO(magik): model version:1.2.1.NNA1_ef8f4d3 
+Original image width, height: 1024 1024 
+face model-->240 320 4 
+Box: 299.837 194.307 695.218 1007.01 Score: 0.999996
+1 Face Detected!!! 
+landmark detection model-->112 112 4 
+face_1: 299 194 396 814
+num_landmarks: 68
+Number of landmarks detected: 68
+Average EAR: 1.46445
+[root@Zeratul:sleep_old_venus]# cd model
+[root@Zeratul:model]# ls
+face.bin       landmark.bin   landmark_.bin
+[root@Zeratul:model]# mv landmark.bin landmark_2.bin
+[root@Zeratul:model]# ls
+face.bin        landmark_.bin   landmark_2.bin
+[root@Zeratul:model]# mv landmark_.bin landmark.bin
+[root@Zeratul:model]# ls
+face.bin        landmark.bin    landmark_2.bin
+[root@Zeratul:model]# cd ..
+[root@Zeratul:sleep_old_venus]# ./landmark_img 6.jpg
+drivers version:0.0.1.0.RELEASE(b4edd3b)240304-22.30.37(7.2.0-r5.1.5-libc2.29-1-lib@STANDARD-sys@STANDARD-aie@NNA1)
+The soc-nna version is 20220525
+[I/magik::venus]: venus.cc:71 ***********************
+[I/magik::venus]: venus.cc:72 venus memory map size: 0
+[I/magik::venus]: venus.cc:73 ***********************
+[I/magik::venus]: venus.cc:106 ***********************
+[I/magik::venus]: venus.cc:107 venus init sucess.
+[I/magik::venus]: venus.cc:108 ***********************
+INFO(magik): venus version:1.2.1.0.ALPHA(04010210_00000000_8df640f) built:240308-00.14.06(7.2.0-r5.1.5-libc2.29-mips-lib@STANDARD-sys@STANDARD-aie@NNA1)
+INFO(magik): model version:1.2.1.NNA1_ef8f4d3 
+INFO(magik): model version:1.2.1.NNA1_ef8f4d3 
+Original image width, height: 1024 1024 
+face model-->240 320 4 
+Box: 299.837 194.307 695.218 1007.01 Score: 0.999996
+1 Face Detected!!! 
+landmark detection model-->112 112 4 
+face_1: 299 194 396 814
+num_landmarks: 68
+Number of landmarks detected: 68
+Average EAR: 0.248681
+
+
+
+drivers version:0.0.1.0.RELEASE(b4edd3b)240304-22.30.37(7.2.0-r5.1.5-libc2.29-1-lib@STANDARD-sys@STANDARD-aie@NNA1)
+The soc-nna version is 20220525
+[I/magik::venus]: venus.cc:71 ***********************
+[I/magik::venus]: venus.cc:72 venus memory map size: 0
+[I/magik::venus]: venus.cc:73 ***********************
+[I/magik::venus]: venus.cc:106 ***********************
+[I/magik::venus]: venus.cc:107 venus init sucess.
+[I/magik::venus]: venus.cc:108 ***********************
+INFO(magik): venus version:1.2.1.0.ALPHA(04010210_00000000_8df640f) built:240308-00.14.06(7.2.0-r5.1.5-libc2.29-mips-lib@STANDARD-sys@STANDARD-aie@NNA1)
+INFO(magik): model version:1.2.1.NNA1_ef8f4d3 
+INFO(magik): model version:1.2.1.NNA1_ef8f4d3 
+[frame_pooling_thread--469 Channel:1 ]:8469(ms)
+0.160502 -------- eye closed -------
+0.216848 -------- eye closed -------
+0.141345 -------- eye closed -------
+0.154625 -------- eye closed -------
+0.178666 -------- eye closed -------
+0.207714 -------- eye closed -------
+0.208461 -------- eye closed -------
+0.184779 -------- eye closed -------
+0.155834 -------- eye closed -------
+0.190913 -------- eye closed -------
+0.178286 -------- eye closed -------
+0.228743 -------- eye closed -------
+0.289391 -------- eye closed -------
+0.173088 -------- eye closed -------
+0.211666 -------- eye closed -------
+0.269547 -------- eye closed -------
+0.226657 -------- eye closed -------
+0.250831 -------- eye closed -------
+0.238177 -------- eye closed -------
+0.209799 -------- eye closed -------
+0.23142 -------- eye closed -------
+0.205624 -------- eye closed -------
+0.205714 -------- eye closed -------
+0.257046 -------- eye closed -------
+0.447888 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.444477 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.439868 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.451832 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.461602 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.42045 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.448757 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.455731 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.49813 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.461002 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.445917 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.390897 -------- eye closed -------
+0.483869 ^^^^^^ eye opened ^^^^^^
+0.485735 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.46058 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.381159 -------- eye closed -------
+0.463015 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.426168 ^^^^^^ eye opened ^^^^^^
+0.425533 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.406669 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.455768 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.279189 -------- eye closed -------
+0.275512 -------- eye closed -------
+0.321403 -------- eye closed -------
+0.321139 -------- eye closed -------
+0.362009 -------- eye closed -------
+0.296927 -------- eye closed -------
+0.288167 -------- eye closed -------
+0.387004 -------- eye closed -------
+0.35023 -------- eye closed -------
+0.250768 -------- eye closed -------
+0.254163 -------- eye closed -------
+0.192153 -------- eye closed -------
+0.308202 -------- eye closed -------
+0.205858 -------- eye closed -------
+0.286133 -------- eye closed -------
+0.192232 -------- eye closed -------
+0.205141 -------- eye closed -------
+0.181239 -------- eye closed -------
+0.165814 -------- eye closed -------
+0.176777 -------- eye closed -------
+0.174842 -------- eye closed -------
+0.14204 -------- eye closed -------
+0.149778 -------- eye closed -------
+0.169128 -------- eye closed -------
+0.18037 -------- eye closed -------
+0.260264 -------- eye closed -------
+0.283162 -------- eye closed -------
+0.257657 -------- eye closed -------
+0.250518 -------- eye closed -------
+0.279956 -------- eye closed -------
+0.209441 -------- eye closed -------
+0.257733 -------- eye closed -------
+0.310792 -------- eye closed -------
+0.23238 -------- eye closed -------
+0.276803 -------- eye closed -------
+0.356718 -------- eye closed -------
+>>>>>>>>>>  sleeping...
+0.361765 -------- eye closed -------
+>>>>>>>>>>  sleeping...
+0.369043 -------- eye closed -------
+>>>>>>>>>>  sleeping...
+0.388466 -------- eye closed -------
+>>>>>>>>>>  sleeping...
+0.380005 -------- eye closed -------
+>>>>>>>>>>  sleeping...
+0.36924 -------- eye closed -------
+>>>>>>>>>>  sleeping...
+0.343383 -------- eye closed -------
+>>>>>>>>>>  sleeping...
+0.380802 -------- eye closed -------
+>>>>>>>>>>  sleeping...
+0.414364 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.411948 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.427106 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.396727 -------- eye closed -------
+0.453665 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.435453 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.458876 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.43217 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.453531 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.459181 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.473135 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.418282 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.444827 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.439858 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.407076 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.422265 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.352378 -------- eye closed -------
+0.389566 -------- eye closed -------
+0.345753 -------- eye closed -------
+0.377651 -------- eye closed -------
+0.391773 -------- eye closed -------
+0.371001 -------- eye closed -------
+0.304803 -------- eye closed -------
+0.314469 -------- eye closed -------
+0.407083 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.269912 -------- eye closed -------
+0.340821 -------- eye closed -------
+0.27656 -------- eye closed -------
+0.277951 -------- eye closed -------
+0.255844 -------- eye closed -------
+0.267287 -------- eye closed -------
+0.296207 -------- eye closed -------
+0.305664 -------- eye closed -------
+0.262797 -------- eye closed -------
+0.29851 -------- eye closed -------
+0.270162 -------- eye closed -------
+0.25343 -------- eye closed -------
+0.271819 -------- eye closed -------
+0.261691 -------- eye closed -------
+0.309251 -------- eye closed -------
+0.276284 -------- eye closed -------
+0.296171 -------- eye closed -------
+0.277518 -------- eye closed -------
+0.296417 -------- eye closed -------
+0.251967 -------- eye closed -------
+0.229178 -------- eye closed -------
+0.214611 -------- eye closed -------
+0.257229 -------- eye closed -------
+0.2475 -------- eye closed -------
+0.270076 -------- eye closed -------
+0.293464 -------- eye closed -------
+0.361735 -------- eye closed -------
+0.317541 -------- eye closed -------
+0.381001 -------- eye closed -------
+0.339617 -------- eye closed -------
+0.383579 -------- eye closed -------
+0.299568 -------- eye closed -------
+0.369678 -------- eye closed -------
+0.397851 -------- eye closed -------
+0.542969 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.552916 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.490418 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.428193 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.476274 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.479594 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.449595 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.370765 -------- eye closed -------
+0.381915 -------- eye closed -------
+0.429247 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.387713 -------- eye closed -------
+0.486365 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.281348 -------- eye closed -------
+0.378677 -------- eye closed -------
+0.302915 -------- eye closed -------
+0.262147 -------- eye closed -------
+0.271262 -------- eye closed -------
+0.293548 -------- eye closed -------
+0.280776 -------- eye closed -------
+0.278618 -------- eye closed -------
+0.297725 -------- eye closed -------
+0.279082 -------- eye closed -------
+0.288572 -------- eye closed -------
+0.313253 -------- eye closed -------
+0.320984 -------- eye closed -------
+0.27812 -------- eye closed -------
+0.512529 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.322084 -------- eye closed -------
+0.323993 -------- eye closed -------
+0.313572 -------- eye closed -------
+0.356883 -------- eye closed -------
+0.45266 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.439801 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.356948 -------- eye closed -------
+0.38399 -------- eye closed -------
+0.467885 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.44863 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.492222 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.491511 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.523159 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.488619 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.488923 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.480404 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.532386 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 
+0.449311 ^^^^^^ eye opened ^^^^^^
+<<<<<<<<<<<  awake! 

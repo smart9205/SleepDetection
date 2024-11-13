@@ -1,0 +1,197 @@
+[root@Zeratul:sleep_old_venus]# insmod soc-nna.ko
+insmod: can't insert 'soc-nna.ko': File exists
+[root@Zeratul:sleep_old_venus]# insmod mpsys.ko
+insmod: can't insert 'mpsys.ko': File exists
+[root@Zeratul:sleep_old_venus]# export LD_LIBRARY_PATH='/system/lib:/usr/lib:/tm
+p/mnt/sdcard/sleep_old_venus'
+[root@Zeratul:sleep_old_venus]# ./sleep_detection_uclibc
+drivers version:0.0.1.0.RELEASE(b4edd3b)240304-22.30.37(7.2.0-r5.1.5-libc2.29-1-lib@STANDARD-sys@STANDARD-aie@NNA1)
+The soc-nna version is 20220525
+[I/magik::venus]: venus.cc:71 ***********************
+[I/magik::venus]: venus.cc:72 venus memory map size: 0
+[I/magik::venus]: venus.cc:73 ***********************
+[I/magik::venus]: venus.cc:106 ***********************
+[I/magik::venus]: venus.cc:107 venus init sucess.
+[I/magik::venus]: venus.cc:108 ***********************
+INFO(magik): venus version:1.2.1.0.ALPHA(04010210_00000000_8df640f) built:240308-00.14.06(7.2.0-r5.1.5-libc2.29-mips-lib@STANDARD-sys@STANDARD-aie@NNA1)
+INFO(magik): model version:1.2.1.NNA1_ef8f4d3 
+INFO(magik): model version:1.2.1.NNA1_ef8f4d3 
+[frame_pooling_thread--469 Channel:1 ]:13914(ms)
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 162.886 11.1635 597.435 208.149 Score: 0.999169
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 162 11 435 197
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [435, 197] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 143.475 12.8555 601.676 224.265 Score: 0.999118
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 143 12 458 212
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 165.341 14.5252 584.804 199.699 Score: 0.998322
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 165 14 419 185
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [419, 185] must be even number!!
+Box: 175.369 17.1268 546.038 207.274 Score: 0.793799
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 175 17 371 190
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [371, 190] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 182.242 13.3108 559.517 203.458 Score: 0.946434
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 182 13 377 190
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [377, 190] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 182.087 12.8336 549.496 211.567 Score: 0.9214
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 182 12 367 199
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [367, 199] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 160.034 9.89154 561.374 206.877 Score: 0.995967
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 160 9 401 197
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [401, 197] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 145.719 5.9746 568.904 208.25 Score: 0.997751
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 145 5 423 203
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [423, 203] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 140.252 3.80528 570.979 207.875 Score: 0.998747
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 140 3 430 204
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 125.186 5.44398 552.125 211.325 Score: 0.998592
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 125 5 427 206
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [427, 206] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 127.064 7.2466 550.248 209.522 Score: 0.99357
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 127 7 423 202
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [423, 202] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 134.469 8.51859 576.763 210.794 Score: 0.99732
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 134 8 442 202
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 129.571 8.51859 591.837 210.794 Score: 0.998747
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 129 8 462 202
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 126.346 12.1626 605.237 219.87 Score: 0.999009
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 126 12 479 207
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [479, 207] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 130.912 10.6457 597.28 223.931 Score: 0.999415
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 130 10 467 213
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [467, 213] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 159.709 8.61954 590.436 205.605 Score: 0.999303
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 159 8 431 197
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [431, 197] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 156.102 15.4189 590.651 203.894 Score: 0.999169
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 156 15 434 188
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 168.568 16.2477 591.753 203.065 Score: 0.999118
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 168 16 423 187
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [423, 187] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 160.443 18.3897 606.662 213.643 Score: 0.999564
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 160 18 446 195
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [446, 195] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 185.974 25.5153 598.091 209.061 Score: 0.996411
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 185 25 413 184
+[E/magik::venus]: imgproc_impl.cc:667 CropRsizeCheck: input size [413, 184] must be even number!!
+Number of landmarks detected: 0
+Not enough landmarks detected
+ori_image w,h: 640 ,360 
+face model-->240 320 1 
+Box: 191.062 25.1647 603.179 199.236 Score: 0.995967
+1 Face Detected!!! 
+landmark detection model-->112 112 1 
+face_1: 191 25 412 174
+Number of landmarks detected: 

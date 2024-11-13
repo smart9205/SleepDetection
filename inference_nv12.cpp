@@ -312,6 +312,12 @@ void softmax(const float* input, float* output, int w, int h, int c) {
     int softmax_size = w * h;
     float* softmax_data = (float*)malloc(softmax_size * sizeof(float));
     float* max = (float*)malloc(softmax_size * sizeof(float));
+    if (softmax_data == NULL || max == NULL) {  
+        // Handle memory allocation failure  
+        if (softmax_data) free(softmax_data);  
+        if (max) free(max);  
+        return;  
+    } 
     for (int f = 0; f < first; ++f) {
         for (int t = 0; t < third; ++t) {
             int m_under = f * third + t;
@@ -334,6 +340,9 @@ void softmax(const float* input, float* output, int w, int h, int c) {
             }
         }
     }
+    // Free the allocated memory  
+    free(softmax_data);  
+    free(max);
 }
 
 
@@ -500,6 +509,8 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height){
         }
         boxes.push_back(box);
     }
+
+    free(output_data_0_softmax);
 
     vector<int> input_size = {320, 240};
     float center_variance = 0.1;
@@ -699,4 +710,3 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height){
     }
     return isOpened;
 }
-
