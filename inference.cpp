@@ -7,7 +7,7 @@
 #include "./stb/stb_image_resize.h"
 static const uint8_t color[3] = {0xff, 0, 0};
 
-#include "inference_nv12.h"
+// #include "inference_nv12.h"
 #include "venus.h"
 #include <math.h>
 #include <fstream>
@@ -27,12 +27,13 @@ static const uint8_t color[3] = {0xff, 0, 0};
 #include "debug.h"
 #define IS_ALIGN_64(x) (((size_t)x) & 0x3F)
 
+#define FACE_MODEL_PATH "./model/face.bin"
+#define LANDMARK_MODEL_PATH "./model/landmark.bin"
 
 using namespace std;
 using namespace magik::venus;
 
-extern std::unique_ptr<venus::BaseNet> face_net;
-extern std::unique_ptr<venus::BaseNet> landmark_net;
+
 
 typedef struct
 {
@@ -74,6 +75,20 @@ uint8_t* read_bin(const char* path)
     infile.close();
     return buffer_pointer;
 }
+
+// float* read_bin(const char* path)
+// {
+//     std::ifstream infile;
+//     infile.open(path, std::ios::binary | std::ios::in);
+//     infile.seekg(0, std::ios::end);
+//     int length = infile.tellg();
+//     printf("length:%d\n",length);
+//     infile.seekg(0, std::ios::beg);
+//     float* buffer_pointer = new float[(length)];
+//     infile.read((char*)buffer_pointer, length);
+//     infile.close();
+//     return buffer_pointer;
+// }
 
 std::vector<std::string> splitString(std::string srcStr, std::string delimStr,bool repeatedCharIgnored = false)
 {
@@ -290,15 +305,15 @@ vector<vector<float>> predict(float width, float height, const vector<vector<flo
 
     // Convert coordinates back to original scale and print
     for (const auto& box : picked) {
-        // cout << "Box: ";
+        cout << "Box: ";
         vector<float> face_box;
         for (size_t i = 0; i < 4; ++i) {
             float coord = i % 2 == 0 ? box[i] * width : box[i] * height;
             face_box.push_back((int)coord);
-            // cout << coord << " ";
+            cout << coord << " ";
         }
         final_boxes.push_back(face_box);
-        // cout << "Score: " << box.back() << endl;
+        cout << "Score: " << box.back() << endl;
     }
     return final_boxes;
 }
@@ -357,8 +372,7 @@ T clamp(T value, T min, T max) {
 }  
   
 
-int Goto_Magik_Detect(char * nv12Data, int width, int height){
-    float EAR_THRESHOLD = 0.4;
+int main(int argc, char **argv) {
     int ret = 0;
     /* set cpu affinity */
     cpu_set_t mask;
@@ -369,8 +383,17 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height){
         return -1;
     }
 
-    bool cvtbgra;
-    cvtbgra = false;
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <image_path>" << std::endl;
+        exit(0);
+    }
+
+    ret = venus::venus_init();
+    if (0 != ret) {
+        fprintf(stderr, "venus init failed.\n");
+        return ret;
+    }
+
     void *handle = NULL;
 
     int ori_img_h = -1;
@@ -383,88 +406,57 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height){
     std::unique_ptr<venus::Tensor> input;
     std::unique_ptr<venus::Tensor> landmark_input;
 
-    input_info_t input_src;
-    input_src.w = width;
-    input_src.h = height;
-    input_src.image = (unsigned char*)nv12Data;
+    std::unique_ptr<venus::BaseNet> face_net = venus::net_create(venus::TensorFormat::NHWC, venus::ShareMemoryMode::ALL_SEPARABLE_MEM);
+    std::unique_ptr<venus::BaseNet> landmark_net = venus::net_create(venus::TensorFormat::NHWC, venus::ShareMemoryMode::ALL_SEPARABLE_MEM);
+	
+    ret = face_net->load_model(FACE_MODEL_PATH);
+    ret = landmark_net->load_model(LANDMARK_MODEL_PATH);
 
-    //---------------------process-------------------------------
-    // get ori image w h
-    ori_img_w = input_src.w;
-    ori_img_h = input_src.h;
-    // printf("ori_image w,h: %d ,%d \n",ori_img_w,ori_img_h);
+    int comp;  
+  
+    // Load the image as RGB  
+    unsigned char* imagedata = stbi_load(argv[1], &ori_img_w, &ori_img_h, &comp, 3);  
+    if (imagedata == nullptr) {  
+        std::cerr << "Error loading image\n";  
+        return 1;  
+    }  
+    printf("Original image width, height: %d %d \n", ori_img_w, ori_img_h);  
 
-    // unsigned char *imagedata = stbi_load(argv[3], &ori_img_w, &ori_img_h, &comp, 3); // RGB
+    magik::venus::shape_t temp_inshape;
+    temp_inshape.push_back(1);
+    temp_inshape.push_back(ori_img_h);
+    temp_inshape.push_back(ori_img_w);
+    temp_inshape.push_back(4);
+    venus::Tensor input_tensor(temp_inshape);
+    uint8_t *temp_indata = input_tensor.mudata<uint8_t>();
+
+    for (int i = 0; i < ori_img_h; i ++)
+	{
+		for (int j = 0; j < ori_img_w; j++)
+		{
+			temp_indata[i*ori_img_w*4 + j*4 + 0] = imagedata[i*ori_img_w*3 + j*3 + 2];
+			temp_indata[i*ori_img_w*4 + j*4 + 1] = imagedata[i*ori_img_w*3 + j*3 + 1];
+			temp_indata[i*ori_img_w*4 + j*4 + 2] = imagedata[i*ori_img_w*3 + j*3 + 0];
+			temp_indata[i*ori_img_w*4 + j*4 + 3] = 0;
+		}
+	}
     
     input = face_net->get_input(0);
     magik::venus::shape_t input_shape = input->shape();
-    // printf("face model-->%d %d %d \n",input_shape[1], input_shape[2], input_shape[3]);
-    if (cvtbgra)
-    {
-        input->reshape({1, face_in_h, face_in_w , 4});
-    }else
-    {
-        input->reshape({1, face_in_h, face_in_w, 1});
-    }
+    printf("face model-->%d %d %d \n",input_shape[1], input_shape[2], input_shape[3]);
+    input->reshape({1, face_in_h, face_in_w , 4});
   
 
-    // uint8_t *indata = input->mudata<uint8_t>();
-    
-    //resize and padding
-    magik::venus::Tensor temp_ori_input({1, ori_img_h, ori_img_w, 1}, TensorFormat::NV12);
-    uint8_t *tensor_data = temp_ori_input.mudata<uint8_t>();
-    int src_size = int(ori_img_h * ori_img_w * 1.5);
-    magik::venus::memcopy((void*)tensor_data, (void*)input_src.image, src_size * sizeof(uint8_t));
-
-    // float scale_x = (float)face_in_w/(float)ori_img_w;
-    // float scale_y = (float)face_in_h/(float)ori_img_h;
-    // scale = scale_x < scale_y ? scale_x:scale_y;  //min scale
-    // // printf("scale---> %f\n",scale);
-
-    // int valid_dst_w = (int)(scale*ori_img_w);
-    // if (valid_dst_w % 2 == 1)
-    //     valid_dst_w = valid_dst_w + 1;
-    // int valid_dst_h = (int)(scale*ori_img_h);
-    // if (valid_dst_h % 2 == 1)
-    //     valid_dst_h = valid_dst_h + 1;
-
-    // int dw = face_in_w - valid_dst_w;
-    // int dh = face_in_h - valid_dst_h;
-
-    // pixel_offset.top = int(round(float(dh)/2 - 0.1));
-    // pixel_offset.bottom = int(round(float(dh)/2 + 0.1));
-    // pixel_offset.left = int(round(float(dw)/2 - 0.1));
-    // pixel_offset.right = int(round(float(dw)/2 + 0.1));
-    
-//    check_pixel_offset(pixel_offset);
-
-    magik::venus::BsCommonParam param;
+    magik::venus::BsExtendParam param;
     param.pad_val = 0;
-    param.pad_type = magik::venus::BsPadType::NONE;
-    param.input_height = ori_img_h;
-    param.input_width = ori_img_w;
-    param.input_line_stride = ori_img_w;
-    param.in_layout = magik::venus::ChannelLayout::NV12;
-
-    if (cvtbgra)
-    {
-        param.out_layout = magik::venus::ChannelLayout::RGBA;
-    }else
-    {
-        param.out_layout = magik::venus::ChannelLayout::NV12;
-    }
-    magik::venus::common_resize((const void*)tensor_data, *input.get(), magik::venus::AddressLocate::NMEM_VIRTUAL, &param);
+    param.pad_type = magik::venus::BsPadType::SYMMETRY;
+    param.in_layout = magik::venus::ChannelLayout::RGBA;
+    param.out_layout = magik::venus::ChannelLayout::RGBA;
+    warp_resize(input_tensor, *input, &param);
+   
     face_net->run();
 
-    // std::vector<std::string> output_names = face_net->get_output_names();
-	// for (int i = 0; i < int(output_names.size()); i++) {
-    //     std::cout << "output_" << i << ": " << output_names[i] << std::endl;
-    //     std::unique_ptr<const venus::Tensor> output_tensor = face_net->get_output(i);
-    //     std::string output_name = output_names[i] + ".bin";
-    //     write_output_bin(output_tensor, output_name);
-	// }
 
-    // postprocessing
     std::unique_ptr<const venus::Tensor> out_0 = face_net->get_output(0); 
     std::unique_ptr<const venus::Tensor> out_1 = face_net->get_output(1);
 
@@ -517,18 +509,14 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height){
     vector<vector<float>> final_face_boxes = predict(ori_img_w, ori_img_h, scores, final_boxes, prob_threshold, iou_threshold, top_k);
 
     if (final_face_boxes.size() > 0){
-        // cout << final_face_boxes.size() << " Face Detected!!! " << endl;
+        cout << final_face_boxes.size() << " Face Detected!!! " << endl;
         landmark_input = landmark_net->get_input(0);
         magik::venus::shape_t landmark_input_shape = landmark_input->shape();
-        // printf("landmark detection model-->%d %d %d \n",landmark_input_shape[1], landmark_input_shape[2], landmark_input_shape[3]);
-
-
+        printf("landmark detection model-->%d %d %d \n",landmark_input_shape[1], landmark_input_shape[2], landmark_input_shape[3]);
     }
 
-
-    int n_face = 1, isOpened = -1;      
-    for (const auto& face_box : final_face_boxes) {
-        isOpened = 2;            
+    int n_face = 1;      
+    for (const auto& face_box : final_face_boxes) {  
         int roi_x = static_cast<int>(face_box[0]);  
         int roi_y = static_cast<int>(face_box[1]);  
         int roi_w = static_cast<int>(face_box[2] - face_box[0]);  
@@ -538,133 +526,104 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height){
         roi_y = std::max(roi_y, 0);  
         roi_w = std::min(roi_w, ori_img_w - roi_x);  
         roi_h = std::min(roi_h, ori_img_h - roi_y);  
-
+  
         if (roi_w % 2 == 1) roi_w += 1;  
-        if (roi_h % 2 == 1) roi_h += 1; 
+        if (roi_h % 2 == 1) roi_h += 1;  
   
         if (roi_w <= 0 || roi_h <= 0) {  
             std::cerr << "Invalid ROI dimensions after adjustment\n";  
             continue;  
         }  
-    
-        // std::cout << "face_" << n_face << ": " << roi_x << " " << roi_y << " " << roi_w << " " << roi_h << std::endl; 
-
-//----------------------------------------------------------------------- Input face data as nv12 ---------------------------------------------------
-        // Crop the ROI from the original NV12 data  
-        std::vector<uint8_t> cropped_nv12(roi_w * roi_h * 1.5);     // Allocate memory for the cropped NV12 image  
-        // Copy Y plane  
-        for (int y = 0; y < roi_h; ++y) {  
-            std::memcpy(cropped_nv12.data() + y * roi_w, nv12Data + (roi_y + y) * ori_img_w + roi_x, roi_w);  
+  
+        std::cout << "face_" << n_face << ": " << roi_x << " " << roi_y << " " << roi_w << " " << roi_h << std::endl;  
+  
+        // Use the RGB data directly for the detected face region  
+        std::vector<uint8_t> faceData(roi_w * roi_h * 3);
+        for (int y = 0; y < roi_h; ++y) {
+            for (int x = 0; x < roi_w; ++x) {
+                int srcIndex = ((roi_y + y) * ori_img_w + (roi_x + x)) * 3;
+                int dstIndex = (y * roi_w + x) * 3;
+                faceData[dstIndex + 0] = imagedata[srcIndex + 0]; // R
+                faceData[dstIndex + 1] = imagedata[srcIndex + 1]; // G
+                faceData[dstIndex + 2] = imagedata[srcIndex + 2]; // B
+            }
+        }
+  
+        // Convert RGB to RGBA  
+        std::vector<uint8_t> rgbaData(roi_w * roi_h * 4);  
+        for (int i = 0; i < roi_h * roi_w; ++i) {  
+            rgbaData[i * 4 + 0] = faceData[i * 3 + 0]; // R  
+            rgbaData[i * 4 + 1] = faceData[i * 3 + 1]; // G  
+            rgbaData[i * 4 + 2] = faceData[i * 3 + 2]; // B  
+            rgbaData[i * 4 + 3] = 0;                   // A  
         }  
-        // Copy UV plane  
-        int uv_offset = ori_img_h * ori_img_w;  
-        for (int y = 0; y < roi_h / 2; ++y) {  
-            std::memcpy(cropped_nv12.data() + roi_w * roi_h + y * roi_w, nv12Data + uv_offset + (roi_y / 2 + y) * ori_img_w + roi_x, roi_w);  
-        }  
+  
+        magik::venus::shape_t temp_inshape = {1, roi_h, roi_w, 4};  
+        magik::venus::Tensor input_tensor(temp_inshape);  
+        uint8_t* temp_indata = input_tensor.mudata<uint8_t>();  
+        std::copy(rgbaData.begin(), rgbaData.end(), temp_indata);  
+  
+        // Get model input tensor and reshape
+        // auto input = landmark_net->get_input(0);
+        std::unique_ptr<venus::Tensor> input = landmark_net->get_input(0);
+  
+        // Resize using warp_resize  
+        magik::venus::BsExtendParam param;  
+        param.pad_val = 0;  
+        param.pad_type = magik::venus::BsPadType::SYMMETRY;
+        param.in_layout = magik::venus::ChannelLayout::RGBA;
+        param.out_layout = magik::venus::ChannelLayout::RGBA;
+  
+        warp_resize(input_tensor, *input, &param);
 
-        // Resize the cropped ROI to 112 x 112  
-        magik::venus::Tensor input_nv12({1, roi_h, roi_w, 1}, magik::venus::TensorFormat::NV12);  
-        magik::venus::memcopy(input_nv12.mudata<uint8_t>(), cropped_nv12.data(), cropped_nv12.size());  
-        magik::venus::Tensor output_nv12({1, emo_in_h, emo_in_w, 1}, magik::venus::TensorFormat::NV12);  
-        magik::venus::BsCommonParam resize_param;  
-        resize_param.pad_val = 0;  
-        resize_param.pad_type = magik::venus::BsPadType::NONE;  
-        resize_param.input_height = roi_h;  
-        resize_param.input_width = roi_w;  
-        resize_param.input_line_stride = roi_w; // Correct stride for cropped image  
-        resize_param.in_layout = magik::venus::ChannelLayout::NV12;  
-        resize_param.out_layout = magik::venus::ChannelLayout::NV12;  
-    
-        magik::venus::common_resize(input_nv12.mudata<uint8_t>(), output_nv12, magik::venus::AddressLocate::NMEM_VIRTUAL, &resize_param);  
-        
-        // Get the input tensor for the landmark detection model 
-        std::unique_ptr<venus::Tensor> landmark_input = landmark_net->get_input(0);  
-        magik::venus::memcopy(landmark_input->mudata<uint8_t>(), output_nv12.mudata<uint8_t>(), emo_in_w * emo_in_h * 1.5);  
-    
-        landmark_net->run();  
+        // debug_1108
+        // uint8_t *indata = input->mudata<uint8_t>();
+        // auto shape = input->shape(); // N H W C
+        // uint8_t* imagedata_bin = read_bin("./data/cropped_face_112_112_3.bin");
 
+        // int size = 1;
+        // printf("shape:");
+        // for(auto s : shape) {
+        //     printf("%d, ", s);
+        //     size *= s;
+        // }
+        // printf("\n");
 
-//----------------------------------------------------------------------- Input face data as RGBA ---------------------------------------------------
-        // *********   in sample-Magik.cpp, the landmark model is loaded as "NHWC" format, 
-        //      face_net = venus::net_create(TensorFormat::NV12);
-	    //      landmark_net = venus::net_create(TensorFormat::NHWC);
+        // int in_h = shape[1];
+        // int in_w = shape[2];
+        // for (int i = 0; i < in_h; i ++) {
+        //     for (int j = 0; j < in_w; j++) {
+        //         indata[i*in_w*4 + j*4 + 0] = imagedata_bin[i*in_w*3 + j*3 + 0];
+        //         indata[i*in_w*4 + j*4 + 1] = imagedata_bin[i*in_w*3 + j*3 + 1];
+        //         indata[i*in_w*4 + j*4 + 2] = imagedata_bin[i*in_w*3 + j*3 + 2];
+        //         indata[i*in_w*4 + j*4 + 3] = 0;
+        //     }
+        // }
 
-        // std::vector<uint8_t> rgbaData; 
-        // // Allocate memory for the RGB image  
-        // std::vector<uint8_t> rgbData(roi_w * roi_h * 3);  
-    
-        // // Convert NV12 to RGB  
-        // for (int y = 0; y < roi_h; ++y) {  
-        //     for (int x = 0; x < roi_w; ++x) {  
-        //         int yIndex = (roi_y + y) * ori_img_w + (roi_x + x);  
-        //         int uvIndex = ori_img_w * ori_img_h + ((roi_y + y) / 2) * ori_img_w + (roi_x + x) / 2 * 2;  
-    
-        //         uint8_t Y = nv12Data[yIndex];  
-        //         uint8_t U = nv12Data[uvIndex];  
-        //         uint8_t V = nv12Data[uvIndex + 1];  
-    
-        //         int C = Y - 16;  
-        //         int D = U - 128;  
-        //         int E = V - 128;  
-    
-        //         uint8_t R = clamp((298 * C + 409 * E + 128) >> 8, 0, 255);  
-        //         uint8_t G = clamp((298 * C - 100 * D - 208 * E + 128) >> 8, 0, 255);  
-        //         uint8_t B = clamp((298 * C + 516 * D + 128) >> 8, 0, 255);  
-    
-        //         rgbData[(y * roi_w + x) * 3 + 0] = R;  
-        //         rgbData[(y * roi_w + x) * 3 + 1] = G;  
-        //         rgbData[(y * roi_w + x) * 3 + 2] = B;  
-        //     }  
-        // }  
-    
-        // // Convert RGB to RGBA  
-        // rgbaData.resize(roi_w * roi_h * 4);  
-        // for (int i = 0; i < roi_h * roi_w; ++i) {  
-        //     rgbaData[i * 4 + 0] = rgbData[i * 3 + 0]; // R  
-        //     rgbaData[i * 4 + 1] = rgbData[i * 3 + 1]; // G  
-        //     rgbaData[i * 4 + 2] = rgbData[i * 3 + 2]; // B  
-        //     rgbaData[i * 4 + 3] = 0;                 // A  
-        // }  
+        // Run the model
+        landmark_net->run();
 
-        // magik::venus::shape_t temp_inshape = {1, roi_h, roi_w, 4};  
-        // magik::venus::Tensor input_tensor(temp_inshape);  
-        // uint8_t* temp_indata = input_tensor.mudata<uint8_t>();  
-    
-        // std::copy(rgbaData.begin(), rgbaData.end(), temp_indata);  
-    
-        // // Get model input tensor and reshape  
-        // std::unique_ptr<venus::Tensor> input = landmark_net->get_input(0);  
-    
-        // // Resize using warp_resize  
-        // magik::venus::BsExtendParam param;  
-        // param.pad_val = 0;  
-        // param.pad_type = magik::venus::BsPadType::SYMMETRY;  
-        // param.in_layout = magik::venus::ChannelLayout::RGBA;  
-        // param.out_layout = magik::venus::ChannelLayout::RGBA;  
-    
-        // warp_resize(input_tensor, *input, &param);  
-    
-        // // Run the model  
-        // landmark_net->run();  
-
-
-
-        
-    
+        // std::vector<std::string> output_names = landmark_net->get_output_names();
+        // for (int i = 0; i < int(output_names.size()); i++) {
+        //     std::cout << "output_" << i << ": " << output_names[i] << std::endl;
+        //     std::unique_ptr<const venus::Tensor> output_tensor = landmark_net->get_output(i);
+        //     std::string output_name = output_names[i] + ".bin";
+        //     write_output_bin(output_tensor, output_name);
+        // }
+  
         std::unique_ptr<const venus::Tensor> output = landmark_net->get_output(0);  
         const float* landmark_data = output->data<float>();  
-    
+  
         std::vector<std::array<float, 2>> landmarks;  
         int num_landmarks = output->shape()[3] / 2;  
-        // std::cout << "num_landmarks: " << num_landmarks << std::endl;  
-
+        std::cout << "num_landmarks: " << num_landmarks << std::endl;  
+  
         for (int i = 0; i < num_landmarks; ++i) {  
             landmarks.push_back({landmark_data[i * 2], landmark_data[i * 2 + 1]});  
         }  
-    
-        // std::cout << "Number of landmarks detected: " << landmarks.size() << std::endl;  
   
-
+        std::cout << "Number of landmarks detected: " << landmarks.size() << std::endl;  
+  
         if (landmarks.size() < 68) {  
             std::cerr << "Not enough landmarks detected\n";  
             continue;  
@@ -677,26 +636,16 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height){
         float right_EAR = calculate_EAR(right_eye_landmarks);  
         float avg_EAR = (left_EAR + right_EAR) / 2.0;  
   
-        std::cout << avg_EAR;  
-        if (avg_EAR < EAR_THRESHOLD) 
-        {
-            isOpened = 0;
-            std::cout << " -------- eye closed -------" << std::endl;
-        }
-        else   
-        {
-            isOpened = 1;
-            std::cout << " ^^^^^^ eye opened ^^^^^^" << std::endl;
-        }
+        std::cout << "Average EAR: " << avg_EAR << std::endl;  
+  
         n_face++;  
-    } 
-    
-
-    ret = venus::venus_deinit();
-    if (0 != ret) {
-        fprintf(stderr, "venus deinit failed.\n");
-        return ret;
-    }
-    return isOpened;
+    }  
+  
+    ret = venus::venus_deinit();  
+    if (0 != ret) {  
+        fprintf(stderr, "venus deinit failed.\n");  
+        return ret;  
+    }  
+    return 0;  
 }
 

@@ -8,11 +8,17 @@
 #include <imp/imp_ivs_move.h>
 #include "sample-common.h"
 #include "inference_nv12.h"
+#include <iostream>
+
+#include <signal.h> 
 
 #define TAG "Sample-IVS-unbind-move"
 
 #define FACE_MODEL_PATH "face.bin"
 #define LANDMARK_MODEL_PATH "landmark.bin"
+
+using namespace std;
+
 
 extern struct chn_conf chn[];
 std::unique_ptr<venus::BaseNet> face_net;
@@ -29,8 +35,8 @@ static int sample_venus_init()
     }
 
 	face_net = venus::net_create(TensorFormat::NV12);
-	// landmark_net = venus::net_create(TensorFormat::NV12);
-	landmark_net = venus::net_create(TensorFormat::NHWC);
+	landmark_net = venus::net_create(TensorFormat::NV12);
+	// landmark_net = venus::net_create(TensorFormat::NHWC);
 
     ret = face_net->load_model(FACE_MODEL_PATH);
     ret = landmark_net->load_model(LANDMARK_MODEL_PATH);
@@ -47,8 +53,17 @@ static int sample_venus_deinit()
 	return ret;
 }
 
+// Global variable to control the loop  
+volatile sig_atomic_t keep_running = 1;  
+  
+// Signal handler function to handle SIGINT  
+void handle_sigint(int sig) {  
+    keep_running = 0;  
+} 
+
 int main(int argc, char *argv[])
 {
+	signal(SIGINT, handle_sigint); 
 	int i, ret;
 	IMPIVSInterface *interface = NULL;
 	IMP_IVS_MoveParam param;
@@ -89,8 +104,11 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
+	int frame_counter = 0;
+	int EAR_CONSEC_FRAMES = 35;
 	/* Step.5 start to get ivs move result */
-	for (i = 0; i < NR_FRAMES_TO_SAVE; i++) {
+	// for (i = 0; i < NR_FRAMES_TO_SAVE; i++) {
+	while (keep_running) {
 
 		ret = IMP_FrameSource_SnapFrame(1, PIX_FMT_NV12, sensor_sub_width, sensor_sub_height, g_sub_nv12_buf_move, &frame);
 		if (ret < 0) {
@@ -98,7 +116,17 @@ int main(int argc, char *argv[])
 			usleep(30*1000);
 		}
 		frame.virAddr = (unsigned int)g_sub_nv12_buf_move;
-		Goto_Magik_Detect((char *)frame.virAddr, sensor_sub_width, sensor_sub_height);
+		int isOpened = Goto_Magik_Detect((char *)frame.virAddr, sensor_sub_width, sensor_sub_height);
+		if (isOpened == 0){
+			frame_counter ++;
+			if (frame_counter > EAR_CONSEC_FRAMES)
+				std::cout << ">>>>>>>>>>  sleeping..." << std::endl;			
+		}
+		if (isOpened == 1){
+			frame_counter = 0;
+			std::cout << "<<<<<<<<<<<  awake! " << std::endl;
+		}
+		
 	}
 
 	free(g_sub_nv12_buf_move);
