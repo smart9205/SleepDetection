@@ -366,8 +366,8 @@ T clamp(T value, T min, T max) {
 }  
   
 
-int Goto_Magik_Detect(char * nv12Data, int width, int height){
-    float EAR_THRESHOLD = 0.4;
+int Goto_Magik_Detect(char * nv12Data, int width, int height, float EAR_THRESHOLD){
+    // float EAR_THRESHOLD = 0.3;
     int ret = 0;
     /* set cpu affinity */
     cpu_set_t mask;

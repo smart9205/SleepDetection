@@ -6,7 +6,7 @@ using namespace std;
 using namespace magik::venus;
 
 
-int Goto_Magik_Detect(char * nv12Data, int width, int height);
+int Goto_Magik_Detect(char * nv12Data, int width, int height, float EAR_THRESHOLD);
 
 
 #endif
