@@ -63,11 +63,11 @@ void handle_sigint(int sig) {
 
 int main(int argc, char *argv[])
 {
-	if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <threshold>" << std::endl;
-        exit(0);
-    }
-	float threshold = std::stof(argv[1]);  
+	// if (argc < 2) {
+    //     std::cerr << "Usage: " << argv[0] << " <threshold>" << std::endl;
+    //     exit(0);
+    // }
+	// float threshold = std::stof(argv[1]);  
 
 	signal(SIGINT, handle_sigint); 
 	int i, ret;
@@ -122,15 +122,15 @@ int main(int argc, char *argv[])
 			usleep(30*1000);
 		}
 		frame.virAddr = (unsigned int)g_sub_nv12_buf_move;
-		int isOpened = Goto_Magik_Detect((char *)frame.virAddr, sensor_sub_width, sensor_sub_height, threshold);
+		int isOpened = Goto_Magik_Detect((char *)frame.virAddr, sensor_sub_width, sensor_sub_height, 0.22);
 		if (isOpened == 0){
 			frame_counter ++;
 			if (frame_counter > EAR_CONSEC_FRAMES)
-				std::cout << ">>>>>>>>>>  sleeping..." << std::endl;			
+				printf(">>>>>>>>>>  sleeping...\n");
 		}
 		if (isOpened == 1){
 			frame_counter = 0;
-			std::cout << "<<<<<<<<<<<  awake! " << std::endl;
+			printf("<<<<<<<<<<<  awake! \n" );
 		}
 		
 	}

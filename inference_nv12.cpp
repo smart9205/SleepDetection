@@ -155,11 +155,18 @@ vector<vector<float>> generate_priors(const vector<vector<int>>& feature_map_lis
     }
     // cout << "priors nums:" << priors.size() << endl;
     // Clipping the priors to be within [0.0, 1.0]
-    for (auto& prior : priors) {  
-        for (auto& val : prior) {  
-            val = std::min(std::max(val, 0.0f), 1.0f);  
-        }  
-    }  
+    // for (auto& prior : priors) {  
+    //     for (auto& val : prior) {  
+    //         val = std::min(std::max(val, 0.0f), 1.0f);  
+    //     }  
+    // } 
+    for(int i = 0; i < priors.size(); i++){
+		for(int j = 0; j < priors[i].size(); j++){
+			float val = priors[i][j];
+			float value_b =  std::min(std::max(val, 0.0f), 1.0f);
+			priors[i][j] = value_b;
+		}
+	}  
 
     return priors;
 }
@@ -520,21 +527,17 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height, float EAR_THRESHOL
     int top_k = -1;
 
     vector<vector<float>> priors = define_img_size(input_size);
-    
     vector<vector<float>> converted_boxes = convert_locations_to_boxes(boxes, priors, center_variance, size_variance);
-
     vector<vector<float>> final_boxes = center_form_to_corner_form(converted_boxes);
-
     vector<vector<float>> final_face_boxes = predict(ori_img_w, ori_img_h, scores, final_boxes, prob_threshold, iou_threshold, top_k);
 
     if (final_face_boxes.size() > 0){
-        // cout << final_face_boxes.size() << " Face Detected!!! " << endl;
+        // std::cout << final_face_boxes.size() << " Face Detected!!! " << std::endl;
         landmark_input = landmark_net->get_input(0);
         magik::venus::shape_t landmark_input_shape = landmark_input->shape();
         // printf("landmark detection model-->%d %d %d \n",landmark_input_shape[1], landmark_input_shape[2], landmark_input_shape[3]);
-
-
     }
+
 
 
     int n_face = 1, isOpened = -1;      
@@ -560,7 +563,7 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height, float EAR_THRESHOL
     
         // std::cout << "face_" << n_face << ": " << roi_x << " " << roi_y << " " << roi_w << " " << roi_h << std::endl; 
 
-//----------------------------------------------------------------------- Input face data as nv12 ---------------------------------------------------
+        //----------------------------------------------------------------------- Input face data as nv12 ---------------------------------------------------
         // Crop the ROI from the original NV12 data  
         std::vector<uint8_t> cropped_nv12(roi_w * roi_h * 1.5);     // Allocate memory for the cropped NV12 image  
         // Copy Y plane  
@@ -595,7 +598,7 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height, float EAR_THRESHOL
         landmark_net->run();  
 
 
-//----------------------------------------------------------------------- Input face data as RGBA ---------------------------------------------------
+        //----------------------------------------------------------------------- Input face data as RGBA ---------------------------------------------------
         // *********   in sample-Magik.cpp, the landmark model is loaded as "NHWC" format, 
         //      face_net = venus::net_create(TensorFormat::NV12);
 	    //      landmark_net = venus::net_create(TensorFormat::NHWC);
@@ -692,21 +695,21 @@ int Goto_Magik_Detect(char * nv12Data, int width, int height, float EAR_THRESHOL
         if (avg_EAR < EAR_THRESHOLD) 
         {
             isOpened = 0;
-            std::cout << " -------- eye closed -------" << std::endl;
+            std::cout << " : -------------- eye closed ---------------" << std::endl;
         }
         else   
         {
             isOpened = 1;
-            std::cout << " ^^^^^^ eye opened ^^^^^^" << std::endl;
+            std::cout << " : *** eye opened ***" << std::endl;
         }
         n_face++;  
     } 
     
 
-    ret = venus::venus_deinit();
-    if (0 != ret) {
-        fprintf(stderr, "venus deinit failed.\n");
-        return ret;
-    }
+    // ret = venus::venus_deinit();
+    // if (0 != ret) {
+    //     fprintf(stderr, "venus deinit failed.\n");
+    //     return ret;
+    // }
     return isOpened;
 }
